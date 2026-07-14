@@ -1,5 +1,7 @@
 # HTML to PDF
 
+[![CI/CD](https://github.com/Zian502/html-to-pdf/actions/workflows/ci.yml/badge.svg)](https://github.com/Zian502/html-to-pdf/actions/workflows/ci.yml)
+
 Use Chromium to render a local HTML file or web page into a searchable PDF while retaining CSS, web fonts, images, and backgrounds.
 
 ## Setup
@@ -65,3 +67,9 @@ GitHub Actions does not provide a file-upload input for manually triggered workf
 The automatic upload flow uses `--full-page` to preserve a desktop page as one continuous PDF page. To use A4, A3, Letter, or landscape output, open **Actions**, select **Convert HTML to PDF**, choose **Run workflow**, and enter the path of an HTML file already stored in the repository.
 
 GitHub's browser upload limit is 25 MiB per file. For reliable rendering, bundle styles and images into the HTML or upload its relative asset files alongside it.
+
+## CI/CD
+
+Every push and pull request automatically runs the `CI/CD` workflow. The pipeline installs locked dependencies, runs the test suite, installs Chromium, generates a real PDF from the example HTML, verifies the PDF signature and size, and publishes the result as a seven-day build artifact.
+
+The separate `Convert HTML to PDF` workflow remains responsible for converting HTML files uploaded to the `uploads` directory.
