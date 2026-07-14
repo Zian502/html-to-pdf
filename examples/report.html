@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HTML to PDF Demo</title>
+    <style>
+      @page {
+        size: A4;
+        margin: 0;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        color: #17202a;
+        background: #f4f7f9;
+        font-family: Arial, "Microsoft YaHei", sans-serif;
+      }
+
+      main {
+        width: 210mm;
+        min-height: 297mm;
+        padding: 20mm;
+        background: white;
+      }
+
+      h1 {
+        margin: 0 0 8mm;
+        color: #096b72;
+        font-size: 28px;
+      }
+
+      .summary {
+        padding: 16px;
+        border-left: 5px solid #ee8b2d;
+        background: #eaf7f7;
+      }
+
+      table {
+        width: 100%;
+        margin-top: 12mm;
+        border-collapse: collapse;
+      }
+
+      th,
+      td {
+        padding: 10px;
+        border: 1px solid #cad4d8;
+        text-align: left;
+      }
+
+      th {
+        background: #163f4a;
+        color: white;
+      }
+
+      tr,
+      .summary {
+        break-inside: avoid;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>HTML 转 PDF 示例</h1>
+      <div class="summary">页面由 Chromium 渲染，背景色、字体和布局都会写入 PDF。</div>
+      <table>
+        <thead>
+          <tr><th>能力</th><th>状态</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>本地 HTML</td><td>支持</td></tr>
+          <tr><td>在线网页</td><td>支持</td></tr>
+          <tr><td>自定义纸张</td><td>支持</td></tr>
+        </tbody>
+      </table>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,21 @@
+{
+  "name": "@patsnap/html-to-pdf",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Render local HTML files or web pages to PDF with Chromium.",
+  "bin": {
+    "html-to-pdf": "./src/cli.mjs"
+  },
+  "scripts": {
+    "pdf": "node ./src/cli.mjs",
+    "install:browser": "playwright install chromium",
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "playwright": "^1.55.0"
+  }
+}
