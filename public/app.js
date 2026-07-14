@@ -166,6 +166,12 @@ function renderList(items) {
     actions.append(
       createActionButton('eye', '查看 PDF', () => openPreview(item)),
       createDownloadButton(item),
+      createActionButton(
+        'trash-2',
+        `删除 ${item.name}`,
+        (event) => deletePdf(item, event.currentTarget),
+        'danger',
+      ),
     )
 
     row.append(fileCell, mode, size, date, actions)
@@ -175,9 +181,10 @@ function renderList(items) {
   window.lucide.createIcons()
 }
 
-function createActionButton(icon, label, onClick) {
+function createActionButton(icon, label, onClick, variant) {
   const button = document.createElement('button')
   button.className = 'icon-button'
+  if (variant) button.classList.add(variant)
   button.type = 'button'
   button.title = label
   button.setAttribute('aria-label', label)
@@ -195,6 +202,25 @@ function createDownloadButton(item) {
   link.setAttribute('aria-label', `下载 ${item.name}`)
   link.innerHTML = '<i data-lucide="download"></i>'
   return link
+}
+
+async function deletePdf(item, button) {
+  if (!window.confirm(`确认删除“${item.name}”吗？此操作无法撤销。`)) return
+
+  button.disabled = true
+  try {
+    const response = await fetch(`/api/pdfs/${encodeURIComponent(item.id)}`, {
+      method: 'DELETE',
+    })
+    const result = await response.json()
+    if (!response.ok) throw new Error(result.error || '删除失败。')
+
+    await loadPdfList()
+    showToast(`${item.name} 已删除`)
+  } catch (error) {
+    button.disabled = false
+    showToast(error.message, true)
+  }
 }
 
 function openPreview(item) {

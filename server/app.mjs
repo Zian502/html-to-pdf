@@ -99,6 +99,12 @@ export async function createApp({
         return
       }
 
+      if (request.method === 'DELETE' && pdfRoute && !pdfRoute[2]) {
+        await deletePdf(directories, pdfRoute[1])
+        sendJson(response, 200, { id: pdfRoute[1] })
+        return
+      }
+
       if (request.method === 'POST' && url.pathname === '/api/pdfs') {
         if (activeConversions >= MAX_ACTIVE_CONVERSIONS) {
           sendJson(response, 429, { error: '转换任务繁忙，请稍后重试。' })
@@ -271,6 +277,21 @@ async function servePdf(response, directories, id, download) {
     'Cache-Control': 'private, max-age=0, must-revalidate',
   })
   createReadStream(pdfPath).pipe(response)
+}
+
+async function deletePdf(directories, id) {
+  if (!PDF_ID_PATTERN.test(id)) throw httpError(404, 'PDF 不存在。')
+
+  const metadataPath = path.join(directories.metadata, `${id}.json`)
+  const pdfPath = path.join(directories.pdfs, `${id}.pdf`)
+
+  try {
+    await Promise.all([fs.access(metadataPath), fs.access(pdfPath)])
+  } catch {
+    throw httpError(404, 'PDF 不存在。')
+  }
+
+  await Promise.all([fs.rm(metadataPath), fs.rm(pdfPath)])
 }
 
 async function serveStaticFile(response, file) {

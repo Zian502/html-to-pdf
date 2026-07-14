@@ -60,6 +60,26 @@ test('uploads HTML, invokes the converter, and serves the PDF', async (t) => {
 
   const download = await fetch(`${baseUrl}${uploaded.item.downloadUrl}`)
   assert.match(download.headers.get('content-disposition'), /^attachment;/)
+
+  const deletion = await fetch(`${baseUrl}/api/pdfs/${uploaded.item.id}`, {
+    method: 'DELETE',
+  })
+  assert.equal(deletion.status, 200)
+  assert.deepEqual(await deletion.json(), { id: uploaded.item.id })
+
+  const listAfterDeletion = await fetch(`${baseUrl}/api/pdfs`).then(
+    (response) => response.json(),
+  )
+  assert.equal(listAfterDeletion.items.length, 0)
+  assert.equal((await fetch(`${baseUrl}${uploaded.item.viewUrl}`)).status, 404)
+  assert.equal(
+    (
+      await fetch(`${baseUrl}/api/pdfs/${uploaded.item.id}`, {
+        method: 'DELETE',
+      })
+    ).status,
+    404,
+  )
 })
 
 test('rejects unsupported files and oversized bodies', async (t) => {
