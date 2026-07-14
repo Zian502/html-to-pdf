@@ -4,6 +4,37 @@
 
 Use Chromium to render a local HTML file or web page into a searchable PDF while retaining CSS, web fonts, images, and backgrounds.
 
+## Web application
+
+Install dependencies and Chromium, then start the local service:
+
+```powershell
+pnpm.cmd install
+pnpm.cmd run install:browser
+pnpm.cmd start
+```
+
+Open `http://127.0.0.1:4173`. Upload a `.html` or `.htm` file, select full-page or a paper format, and convert it. Generated PDFs are stored under `runtime/` and remain available in the page list for preview and download.
+
+Development mode restarts the Node process when server files change:
+
+```powershell
+pnpm.cmd dev
+```
+
+The service binds to `127.0.0.1` by default. Use `PORT` to change the port and `HOST` only when the service must be reachable from another machine.
+
+### HTTP API
+
+```text
+POST /api/pdfs?filename=report.html&mode=full-page&landscape=false
+GET  /api/pdfs
+GET  /api/pdfs/:id
+GET  /api/pdfs/:id/download
+```
+
+The upload endpoint accepts the raw HTML file as its request body and limits uploads to 10 MiB. `mode` accepts `full-page`, `A4`, `A3`, or `Letter`.
+
 ## Setup
 
 ```powershell

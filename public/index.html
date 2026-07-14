@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light" />
+    <title>HTML to PDF</title>
+    <link rel="stylesheet" href="/styles.css?v=1" />
+  </head>
+  <body>
+    <header class="app-header">
+      <div class="header-inner">
+        <a class="brand" href="/" aria-label="HTML to PDF 首页">
+          <span class="brand-mark"><i data-lucide="file-type-2"></i></span>
+          <span>HTML to PDF</span>
+        </a>
+        <span class="service-status"><span></span>服务可用</span>
+      </div>
+    </header>
+
+    <main>
+      <section class="workspace" aria-labelledby="page-title">
+        <div class="workspace-heading">
+          <div>
+            <p class="eyebrow">文件转换</p>
+            <h1 id="page-title">生成 PDF</h1>
+          </div>
+          <p class="workspace-note">HTML 文件最大 10 MB</p>
+        </div>
+
+        <form id="convert-form" class="converter" novalidate>
+          <input
+            id="html-file"
+            type="file"
+            accept=".html,.htm,text/html"
+            hidden
+          />
+          <div id="drop-zone" class="drop-zone">
+            <div class="drop-icon"><i data-lucide="file-up"></i></div>
+            <div class="drop-copy">
+              <strong id="file-label">选择或拖入 HTML 文件</strong>
+              <span id="file-detail">支持 .html 和 .htm</span>
+            </div>
+            <button id="choose-file" class="button secondary" type="button">
+              <i data-lucide="upload"></i>
+              选择文件
+            </button>
+          </div>
+
+          <div class="conversion-controls">
+            <fieldset class="control-group">
+              <legend>页面格式</legend>
+              <div class="segmented" id="page-mode">
+                <label
+                  ><input
+                    type="radio"
+                    name="mode"
+                    value="full-page"
+                    checked
+                  /><span>完整长页</span></label
+                >
+                <label
+                  ><input type="radio" name="mode" value="A4" /><span
+                    >A4</span
+                  ></label
+                >
+                <label
+                  ><input type="radio" name="mode" value="A3" /><span
+                    >A3</span
+                  ></label
+                >
+                <label
+                  ><input type="radio" name="mode" value="Letter" /><span
+                    >Letter</span
+                  ></label
+                >
+              </div>
+            </fieldset>
+
+            <label class="toggle-control" id="landscape-control">
+              <span>
+                <strong>横向</strong>
+                <small>纸张格式生效</small>
+              </span>
+              <input id="landscape" type="checkbox" disabled />
+              <span class="toggle" aria-hidden="true"></span>
+            </label>
+
+            <button
+              id="convert-button"
+              class="button primary"
+              type="submit"
+              disabled
+            >
+              <i data-lucide="file-down"></i>
+              转换为 PDF
+            </button>
+          </div>
+
+          <div id="progress" class="progress" aria-live="polite" hidden>
+            <span></span>
+            <p>正在渲染 PDF，请稍候…</p>
+          </div>
+        </form>
+      </section>
+
+      <section class="library" aria-labelledby="library-title">
+        <div class="section-heading">
+          <div>
+            <h2 id="library-title">PDF 文件</h2>
+            <span id="pdf-count">0 个文件</span>
+          </div>
+          <button
+            id="refresh-list"
+            class="icon-button"
+            type="button"
+            title="刷新列表"
+            aria-label="刷新 PDF 列表"
+          >
+            <i data-lucide="refresh-cw"></i>
+          </button>
+        </div>
+
+        <div
+          class="pdf-table"
+          role="region"
+          aria-label="PDF 文件列表"
+          tabindex="0"
+        >
+          <div class="table-head" aria-hidden="true">
+            <span>文件名</span>
+            <span>格式</span>
+            <span>大小</span>
+            <span>生成时间</span>
+            <span>操作</span>
+          </div>
+          <div id="pdf-list" class="table-body"></div>
+          <div id="empty-state" class="empty-state">
+            <i data-lucide="files"></i>
+            <strong>暂无 PDF</strong>
+            <span>完成一次转换后，文件会显示在这里。</span>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <dialog id="preview-dialog" class="preview-dialog">
+      <div class="dialog-header">
+        <strong id="preview-title">PDF 预览</strong>
+        <div class="dialog-actions">
+          <a
+            id="preview-download"
+            class="icon-button"
+            href="#"
+            title="下载 PDF"
+            aria-label="下载 PDF"
+          >
+            <i data-lucide="download"></i>
+          </a>
+          <button
+            id="close-preview"
+            class="icon-button"
+            type="button"
+            title="关闭预览"
+            aria-label="关闭预览"
+          >
+            <i data-lucide="x"></i>
+          </button>
+        </div>
+      </div>
+      <iframe id="pdf-preview" title="PDF 文件预览"></iframe>
+    </dialog>
+
+    <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+    <script src="/vendor/lucide.js"></script>
+    <script src="/app.js?v=1" type="module"></script>
+  </body>
+</html>
