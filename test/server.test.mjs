@@ -25,6 +25,10 @@ test('uploads HTML, invokes the converter, and serves the PDF', async (t) => {
   assert.equal(home.status, 200)
   assert.match(await home.text(), /HTML to PDF/)
 
+  const health = await fetch(`${baseUrl}/health`)
+  assert.equal(health.status, 200)
+  assert.deepEqual(await health.json(), { status: 'ok' })
+
   const icons = await fetch(`${baseUrl}/vendor/lucide.js`)
   assert.equal(icons.status, 200)
   assert.match(icons.headers.get('content-type'), /javascript/)

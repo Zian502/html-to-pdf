@@ -12,6 +12,7 @@ test('uses stable defaults', () => {
   assert.equal(options.media, 'screen')
   assert.deepEqual(options.viewport, { width: 1440, height: 900 })
   assert.equal(options.printBackground, true)
+  assert.equal(options.safe, false)
 })
 
 test('parses custom rendering options', () => {
@@ -46,6 +47,12 @@ test('supports full-page rendering', () => {
   const options = parseArguments(['report.html', '--full-page'])
 
   assert.equal(options.fullPage, true)
+})
+
+test('supports safe rendering for untrusted HTML', () => {
+  const options = parseArguments(['report.html', '--safe'])
+
+  assert.equal(options.safe, true)
 })
 
 test('rejects full-page with a custom paper size', () => {

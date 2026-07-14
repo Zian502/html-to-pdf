@@ -23,6 +23,8 @@ export async function renderPdf(options) {
     const context = await browser.newContext({
       viewport: options.viewport,
       deviceScaleFactor: 1,
+      javaScriptEnabled: !options.safe,
+      offline: options.safe,
     })
     const page = await context.newPage()
     page.setDefaultTimeout(options.timeout)
@@ -41,10 +43,13 @@ export async function renderPdf(options) {
     })
 
     await page.emulateMedia({ media: options.media })
-    await page.addStyleTag({ content: STABLE_RENDER_CSS })
+    await injectCss(page, STABLE_RENDER_CSS)
 
     if (options.cssPath) {
-      await page.addStyleTag({ path: path.resolve(options.cssPath) })
+      await injectCss(
+        page,
+        await fs.readFile(path.resolve(options.cssPath), 'utf8'),
+      )
     }
 
     if (options.waitFor) {
@@ -95,16 +100,18 @@ export async function renderPdf(options) {
         ),
       }))
 
-      await page.addStyleTag({
-        content: `@page { size: ${pageSize.width}px ${pageSize.height}px; margin: ${options.margin}; }`,
-      })
+      await injectCss(
+        page,
+        `@page { size: ${pageSize.width}px ${pageSize.height}px; margin: ${options.margin}; }`,
+      )
       pdfOptions.width = `${pageSize.width}px`
       pdfOptions.height = `${pageSize.height}px`
       pdfOptions.preferCSSPageSize = true
     } else if (options.width && options.height) {
-      await page.addStyleTag({
-        content: `@page { size: ${options.width} ${options.height}; margin: ${options.margin}; }`,
-      })
+      await injectCss(
+        page,
+        `@page { size: ${options.width} ${options.height}; margin: ${options.margin}; }`,
+      )
       pdfOptions.width = options.width
       pdfOptions.height = options.height
       pdfOptions.preferCSSPageSize = true
@@ -119,6 +126,14 @@ export async function renderPdf(options) {
   } finally {
     await browser.close()
   }
+}
+
+async function injectCss(page, content) {
+  await page.evaluate((css) => {
+    const style = document.createElement('style')
+    style.textContent = css
+    document.head.append(style)
+  }, content)
 }
 
 async function launchBrowser() {

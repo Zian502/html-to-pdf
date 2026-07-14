@@ -78,6 +78,11 @@ export async function createApp({
     try {
       const url = new URL(request.url ?? '/', 'http://localhost')
 
+      if (request.method === 'GET' && url.pathname === '/health') {
+        sendJson(response, 200, { status: 'ok' })
+        return
+      }
+
       if (request.method === 'GET' && STATIC_FILES.has(url.pathname)) {
         await serveStaticFile(response, STATIC_FILES.get(url.pathname))
         return
@@ -183,7 +188,7 @@ async function convertUpload({
 }
 
 async function runCliConverter({ inputPath, outputPath, mode, landscape }) {
-  const argumentsList = [CLI_PATH, inputPath, outputPath]
+  const argumentsList = [CLI_PATH, inputPath, outputPath, '--safe']
   if (mode === 'full-page') {
     argumentsList.push('--full-page')
   } else {

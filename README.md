@@ -24,6 +24,8 @@ pnpm.cmd dev
 
 The service binds to `127.0.0.1` by default. Use `PORT` to change the port and `HOST` only when the service must be reachable from another machine.
 
+Uploaded HTML is rendered in safe mode: JavaScript and external requests are disabled. Use self-contained HTML with embedded styles, fonts, and images.
+
 ### HTTP API
 
 ```text
@@ -104,6 +106,14 @@ GitHub's browser upload limit is 25 MiB per file. For reliable rendering, bundle
 Every push and pull request automatically runs the `CI/CD` workflow. The pipeline installs locked dependencies, runs the test suite, installs Chromium, generates a real PDF from the example HTML, verifies the PDF signature and size, and publishes the result as a seven-day build artifact.
 
 The separate `Convert HTML to PDF` workflow remains responsible for converting HTML files uploaded to the `uploads` directory.
+
+## Deploy to Render
+
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/Zian502/html-to-pdf)
+
+The root `render.yaml` creates a free Docker web service in Render's Singapore region. Each push runs GitHub Actions first; Render deploys the commit after the checks pass and exposes the service on an `onrender.com` URL.
+
+Render's free instance uses an ephemeral filesystem. Generated PDFs can disappear when the instance restarts, sleeps, or is redeployed, so this setup is intended for demos rather than permanent document storage.
 
 ## License
 

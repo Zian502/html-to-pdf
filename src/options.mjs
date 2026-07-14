@@ -23,6 +23,7 @@ Options:
   --timeout <milliseconds>    Navigation/render timeout (default: 60000)
   --header-footer             Include Chromium header and footer
   --no-background             Do not print background graphics
+  --safe                      Disable JavaScript and external requests
   --help                      Show this help
 
 Examples:
@@ -79,6 +80,7 @@ export function parseArguments(argv) {
         '--landscape',
         '--header-footer',
         '--no-background',
+        '--safe',
         '--help',
       ].includes(argument)
     ) {
@@ -143,6 +145,7 @@ export function parseArguments(argv) {
     timeout,
     displayHeaderFooter: flags.has('--header-footer'),
     printBackground: !flags.has('--no-background'),
+    safe: flags.has('--safe'),
   }
 }
 

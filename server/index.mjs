@@ -2,11 +2,17 @@ import { createApp } from './app.mjs'
 
 const port = parsePort(process.env.PORT ?? '4173')
 const host = process.env.HOST ?? '127.0.0.1'
-const server = await createApp()
+const server = await createApp({ storageRoot: process.env.STORAGE_ROOT })
 
 server.listen(port, host, () => {
   console.log(`HTML to PDF is running at http://${host}:${port}`)
 })
+
+for (const signal of ['SIGINT', 'SIGTERM']) {
+  process.once(signal, () => {
+    server.close(() => process.exit(0))
+  })
+}
 
 function parsePort(value) {
   const port = Number(value)

@@ -12,8 +12,8 @@ importers:
         specifier: ^1.24.0
         version: 1.24.0
       playwright:
-        specifier: ^1.55.0
-        version: 1.61.1
+        specifier: 1.61.0
+        version: 1.61.0
 
 packages:
 
@@ -25,13 +25,13 @@ packages:
   lucide@1.24.0:
     resolution: {integrity: sha512-oMAaeuNDc5VCnBb3IjwKYGRT56tqanUm1fyDFT5Tl8hWSZND59gztgjvXje08jKLPVAq0gHJcwZUE8GCQxzBeg==}
 
-  playwright-core@1.61.1:
-    resolution: {integrity: sha512-h7Qlt6m4REp25qvIdvbDtVmD4LqVXfpRxhORv9L0jzETM05p4fuPJ3dKyuSXQxDSbXnmS79HAgi9589lGSpLkg==}
+  playwright-core@1.61.0:
+    resolution: {integrity: sha512-caX7TrY3Ml6egyDX0WUcTHDxodl/b51y5wJOdCEA36QviK/s2g081hvmGs8eaE3DWb6NYZQ6BjO/QkNRPenoPA==}
     engines: {node: '>=18'}
     hasBin: true
 
-  playwright@1.61.1:
-    resolution: {integrity: sha512-DWnY5o3YbLWK4GovuAVwpqL+1VwGNdUGrRr++8j8PtQQzvAVZUIMjKQ90fY689sEJZJBbZVw1rXaOKSTitkzPQ==}
+  playwright@1.61.0:
+    resolution: {integrity: sha512-Z+7BeeqQPRRzklHsVFP4KTGIyMxKUmfeRA4WisM6G3/XW6nwGeX6fX9qYaDa+CiUqpOkb2f6X3nar05R3kSuJQ==}
     engines: {node: '>=18'}
     hasBin: true
 
@@ -42,10 +42,10 @@ snapshots:
 
   lucide@1.24.0: {}
 
-  playwright-core@1.61.1: {}
+  playwright-core@1.61.0: {}
 
-  playwright@1.61.1:
+  playwright@1.61.0:
     dependencies:
-      playwright-core: 1.61.1
+      playwright-core: 1.61.0
     optionalDependencies:
       fsevents: 2.3.2

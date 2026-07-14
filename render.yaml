@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: zian502-html-to-pdf
+    runtime: docker
+    plan: free
+    region: singapore
+    repo: https://github.com/Zian502/html-to-pdf.git
+    branch: main
+    autoDeployTrigger: checksPass
+    healthCheckPath: /health
+    renderSubdomainPolicy: enabled
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    envVars:
+      - key: HOST
+        value: 0.0.0.0
+      - key: STORAGE_ROOT
+        value: /tmp/html-to-pdf
