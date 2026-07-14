@@ -1,0 +1,131 @@
+name: Convert HTML to PDF
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "uploads/**/*.html"
+      - "uploads/**/*.htm"
+  workflow_dispatch:
+    inputs:
+      html_path:
+        description: "Repository-relative path to an HTML file"
+        required: true
+        default: "uploads/example.html"
+        type: string
+      page_mode:
+        description: "PDF page layout"
+        required: true
+        default: "full-page"
+        type: choice
+        options:
+          - full-page
+          - A4
+          - A3
+          - Letter
+      landscape:
+        description: "Use landscape orientation for paper formats"
+        required: true
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+jobs:
+  convert:
+    name: Render PDF
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          package-manager-cache: false
+
+      - name: Install pnpm
+        run: npm install --global pnpm@11.5.2
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Chromium
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Resolve input files
+        id: inputs
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          MANUAL_HTML_PATH: ${{ inputs.html_path }}
+          PAGE_MODE: ${{ inputs.page_mode }}
+          LANDSCAPE: ${{ inputs.landscape }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p .action-input generated-pdfs
+
+          if [[ "$EVENT_NAME" == "workflow_dispatch" ]]; then
+            if [[ "$MANUAL_HTML_PATH" = /* || "$MANUAL_HTML_PATH" == *".."* ]]; then
+              echo "html_path must be a repository-relative path without '..'" >&2
+              exit 1
+            fi
+            if [[ ! "$MANUAL_HTML_PATH" =~ \.html?$ ]]; then
+              echo "html_path must point to an .html or .htm file" >&2
+              exit 1
+            fi
+            if [[ ! -f "$MANUAL_HTML_PATH" ]]; then
+              echo "HTML file not found: $MANUAL_HTML_PATH" >&2
+              exit 1
+            fi
+            printf '%s\0' "$MANUAL_HTML_PATH" > .action-input/files
+            echo "page_mode=${PAGE_MODE:-full-page}" >> "$GITHUB_OUTPUT"
+            echo "landscape=${LANDSCAPE:-false}" >> "$GITHUB_OUTPUT"
+          else
+            find uploads -type f \( -iname '*.html' -o -iname '*.htm' \) -print0 > .action-input/files
+            if [[ ! -s .action-input/files ]]; then
+              echo "No HTML files were found under uploads/" >&2
+              exit 1
+            fi
+            echo "page_mode=full-page" >> "$GITHUB_OUTPUT"
+            echo "landscape=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Convert HTML files
+        env:
+          PAGE_MODE: ${{ steps.inputs.outputs.page_mode }}
+          LANDSCAPE: ${{ steps.inputs.outputs.landscape }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          while IFS= read -r -d '' html_file; do
+            relative_path="${html_file#uploads/}"
+            safe_name="${relative_path//\//__}"
+            output_file="generated-pdfs/${safe_name%.*}.pdf"
+
+            args=("$html_file" "$output_file")
+            if [[ "$PAGE_MODE" == "full-page" ]]; then
+              args+=(--full-page)
+            else
+              args+=(--format "$PAGE_MODE")
+              if [[ "$LANDSCAPE" == "true" ]]; then
+                args+=(--landscape)
+              fi
+            fi
+
+            node ./src/cli.mjs "${args[@]}"
+          done < .action-input/files
+
+      - name: Upload generated PDFs
+        uses: actions/upload-artifact@v7
+        with:
+          name: converted-pdfs-${{ github.run_number }}
+          path: generated-pdfs/*.pdf
+          if-no-files-found: error
+          retention-days: 14

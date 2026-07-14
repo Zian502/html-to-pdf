@@ -41,3 +41,38 @@ test('requires custom width and height together', () => {
     /must be provided together/,
   )
 })
+
+test('supports full-page rendering', () => {
+  const options = parseArguments(['report.html', '--full-page'])
+
+  assert.equal(options.fullPage, true)
+})
+
+test('rejects full-page with a custom paper size', () => {
+  assert.throws(
+    () =>
+      parseArguments([
+        'report.html',
+        '--full-page',
+        '--width',
+        '1440px',
+        '--height',
+        '900px',
+      ]),
+    /cannot be combined/,
+  )
+})
+
+test('rejects unsafe CSS length values', () => {
+  assert.throws(
+    () =>
+      parseArguments([
+        'report.html',
+        '--width',
+        '100px; color: red',
+        '--height',
+        '900px',
+      ]),
+    /must be a non-negative length/,
+  )
+})

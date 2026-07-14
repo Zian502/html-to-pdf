@@ -73,7 +73,7 @@ export async function renderPdf(options) {
       path: options.output,
       landscape: options.landscape,
       printBackground: options.printBackground,
-      preferCSSPageSize: true,
+      preferCSSPageSize: false,
       displayHeaderFooter: options.displayHeaderFooter,
       margin: {
         top: options.margin,
@@ -83,9 +83,31 @@ export async function renderPdf(options) {
       },
     }
 
-    if (options.width && options.height) {
+    if (options.fullPage) {
+      const pageSize = await page.evaluate(() => ({
+        width: Math.max(
+          document.documentElement.scrollWidth,
+          document.body?.scrollWidth ?? 0,
+        ),
+        height: Math.max(
+          document.documentElement.scrollHeight,
+          document.body?.scrollHeight ?? 0,
+        ),
+      }))
+
+      await page.addStyleTag({
+        content: `@page { size: ${pageSize.width}px ${pageSize.height}px; margin: ${options.margin}; }`,
+      })
+      pdfOptions.width = `${pageSize.width}px`
+      pdfOptions.height = `${pageSize.height}px`
+      pdfOptions.preferCSSPageSize = true
+    } else if (options.width && options.height) {
+      await page.addStyleTag({
+        content: `@page { size: ${options.width} ${options.height}; margin: ${options.margin}; }`,
+      })
       pdfOptions.width = options.width
       pdfOptions.height = options.height
+      pdfOptions.preferCSSPageSize = true
     } else {
       pdfOptions.format = options.format
     }
