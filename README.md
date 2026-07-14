@@ -104,3 +104,7 @@ GitHub's browser upload limit is 25 MiB per file. For reliable rendering, bundle
 Every push and pull request automatically runs the `CI/CD` workflow. The pipeline installs locked dependencies, runs the test suite, installs Chromium, generates a real PDF from the example HTML, verifies the PDF signature and size, and publishes the result as a seven-day build artifact.
 
 The separate `Convert HTML to PDF` workflow remains responsible for converting HTML files uploaded to the `uploads` directory.
+
+## License
+
+Licensed under the [MIT License](./LICENSE). Copyright (c) 2026 Zian502.

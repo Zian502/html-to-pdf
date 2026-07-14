@@ -2,6 +2,7 @@
   "name": "@patsnap/html-to-pdf",
   "version": "1.0.0",
   "private": true,
+  "license": "MIT",
   "type": "module",
   "description": "Render local HTML files or web pages to PDF with Chromium.",
   "bin": {
